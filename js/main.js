@@ -1,6 +1,24 @@
+import { Banco, Conta } from './banco.js';
 // ----------------- Alerta de Notação do valor ---------------------- 
 const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+const valorInput = document.getElementById('valor');
+
+let ano = document.getElementById('ano')
+let mes = document.getElementById('mes')
+let dia = document.getElementById('dia')
+let tipo = document.getElementById('tipo') 
+let descricao = document.getElementById('descricao') 
+let valor = document.getElementById('valor')
+
 let wrapper = null; 
+
+const adicionar = document.querySelector("#adicionar");
+
+let saldo = document.getElementById("saldoAtual")
+let saldoAtual = 0;
+    
+let saldoAntigo = 0; 
+let saldoModificado = 0;
 
 const appendAlert = (message, type) => {
 
@@ -28,7 +46,7 @@ close.addEventListener('click', () => {
 
 }
 
-const valorInput = document.getElementById('valor');
+
 
 valorInput.addEventListener("focus", () => {
    appendAlert('Atenção:  -Valor (despesa) ou +Valor (ganho)', 'warning')
@@ -51,73 +69,9 @@ function modals(titulo, div, conteudo, btn1, btn2){
 
 //-------------- Class Despesa -----------------------------------------
 
-class Despesa {
-  constructor(ano, mes, dia, tipo, descricao, valor){
-    this.ano = ano
-    this.mes = mes
-    this.dia = dia
-    this.tipo = tipo
-    this.descricao = descricao
-    this.valor= valor
-  }
+ adicionar.addEventListener("click", function operacoes() {
 
-  validarDados(){
-    for(let i in this){
-      if(this[i] == undefined || this[i] == '' || this[i] == null || this[i] == 0.00){
-        return false;
-      }
-    }
-
-     return true;
-  }
-}
-
-class Bd {
-
-  constructor(){
-    let id = localStorage.getItem('id')
-
-    if(id === null){
-      localStorage.setItem('id', 0)
-    }
-  }
-
-  getProximoId(){
-    let proximoId = localStorage.getItem('id')
-
-    return parseInt(proximoId)+1;
-  }
-
-  gravar(d){
-    let id = this.getProximoId()
-
-    localStorage.setItem(id, JSON.stringify(d))
-
-    localStorage.setItem('id', id)
-}
-}
-
-let bd = new Bd()
-
-const cadastrar = document.querySelector("#adicionar");
-
-    let saldo = document.getElementById("saldoAtual")
-    let saldoAtual = 0;
-    
-let saldoAntigo = 0; 
-let saldoModificado = 0;
-cadastrar.addEventListener("click", function operacoes() {
-  
-
-  let ano = document.getElementById('ano')
-  let mes = document.getElementById('mes')
-  let dia = document.getElementById('dia')
-  let tipo = document.getElementById('tipo') 
-  let descricao = document.getElementById('descricao') 
-  let valor = document.getElementById('valor')
-
-
-  let despesa = new Despesa(
+  let minhaConta = new Conta(
     ano.value,
     mes.value,
     dia.value,
@@ -126,9 +80,11 @@ cadastrar.addEventListener("click", function operacoes() {
     valor.value
   )
 
-if(despesa.validarDados()){
 
-    let quant = despesa.valor
+//Validações de entradas e Cálculos 
+if(minhaConta.validarDados()){
+
+    let quant = minhaConta.valor
     quant = quant.replace(',', '.');
     let operacao = quant[0]
 
@@ -141,7 +97,14 @@ const valorNumerico = parseFloat(quant).toFixed(2)
 
        saldoAntigo = saldoAtual;
 
-      
+function clearInput(){
+  ano.value = ''
+  mes.value = ''
+  tipo.value = ''
+  dia.value = ''
+  descricao.value = ''
+  valor.value = ''
+}
       
     if(operacao === '+'){
       saldoAtual =  saldoAtual + Math.abs(valorNumerico)
@@ -173,7 +136,9 @@ const valorNumerico = parseFloat(quant).toFixed(2)
     
     
     saldo.innerHTML = saldoAtual.toFixed(2)
-    //bd.gravar(despesa)
+
+      clearInput()
+   
      modals('Registro inserido com sucesso', 'modal-header text-success', 'Os dados foram cadastrados com sucesso!', 'Voltar', 'btn btn-success')
     }
     
@@ -182,6 +147,10 @@ const valorNumerico = parseFloat(quant).toFixed(2)
   else {
      modals('Erro na inclusão do registro', 'modal-header text-danger', 'Erro, verifique se todos os campos foram preenchidos corretamente ou se o valor adicionado foi zero (indiferente).', 'Voltar e corrigir', 'btn btn-danger')
   }
+
+  let meuBanco = new Banco();
+
+  meuBanco.gravar(minhaConta)
 
 
 });
