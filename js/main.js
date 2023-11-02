@@ -1,4 +1,5 @@
 import { Banco, Conta } from './banco.js';
+
 // ----------------- Alerta de Notação do valor ---------------------- 
 const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
 const valorInput = document.getElementById('valor');
@@ -14,8 +15,15 @@ let wrapper = null;
 
 const adicionar = document.querySelector("#adicionar");
 
-let saldo = document.getElementById("saldoAtual")
+
 let saldoAtual = 0;
+   
+    const valorSalvo = localStorage.getItem('saldoAtual');
+    if (valorSalvo !== null) {
+      let saldo = document.getElementById('saldoAtual');
+      saldo.textContent = valorSalvo;
+     
+    }
     
 let saldoAntigo = 0; 
 let saldoModificado = 0;
@@ -65,11 +73,12 @@ function modals(titulo, div, conteudo, btn1, btn2){
     $('#modalRegistra').modal('show')
 }
 
-// ---------------------------------------------------------------------
 
-//-------------- Class Despesa -----------------------------------------
+
 
  adicionar.addEventListener("click", function operacoes() {
+
+  
 
   let minhaConta = new Conta(
     ano.value,
@@ -135,8 +144,13 @@ function clearInput(){
     } 
     
     
-    saldo.innerHTML = saldoAtual.toFixed(2)
 
+      const valorFinal = saldoAtual.toFixed(2)
+    localStorage.setItem("saldoAtual", valorFinal)
+
+    window.location.reload()
+ 
+    
       clearInput()
    
      modals('Registro inserido com sucesso', 'modal-header text-success', 'Os dados foram cadastrados com sucesso!', 'Voltar', 'btn btn-success')
