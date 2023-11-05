@@ -1,3 +1,7 @@
+
+
+
+
 export class Conta {
     constructor(ano, mes, dia, tipo, descricao, valor){
       this.ano = ano
@@ -16,6 +20,26 @@ export class Conta {
       }
   
        return true;
+    }
+
+    receita(){
+
+      if(this.valor > 0){
+          let receitas = parseFloat(localStorage.getItem('receitas') || 0);
+          receitas  += parseFloat(this.valor)
+          localStorage.setItem('receitas', receitas.toFixed(2))
+      }
+    }
+
+    despesa(){
+
+      if(this.valor < 0){
+          let despesas = parseFloat(localStorage.getItem('despesas') || 0);
+          despesas  -= parseFloat(this.valor) * -1
+          localStorage.setItem('despesas', despesas.toFixed(2))
+
+        
+      }
     }
   
   

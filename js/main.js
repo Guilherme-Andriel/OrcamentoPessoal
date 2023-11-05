@@ -1,5 +1,4 @@
 import { Banco, Conta } from './banco.js';
-
 // ----------------- Alerta de Notação do valor ---------------------- 
 const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
 const valorInput = document.getElementById('valor');
@@ -15,15 +14,10 @@ let wrapper = null;
 
 const adicionar = document.querySelector("#adicionar");
 
+let saldo = document.getElementById("saldoAtual")
+
 
 let saldoAtual = 0;
-   
-    const valorSalvo = localStorage.getItem('saldoAtual');
-    if (valorSalvo !== null) {
-      let saldo = document.getElementById('saldoAtual');
-      saldo.textContent = valorSalvo;
-     
-    }
     
 let saldoAntigo = 0; 
 let saldoModificado = 0;
@@ -73,12 +67,24 @@ function modals(titulo, div, conteudo, btn1, btn2){
     $('#modalRegistra').modal('show')
 }
 
+function verificarLoalStorageSaldo(){
 
+  document.addEventListener('DOMContentLoaded', function() {
+    // Verifica se há um valor de saldo salvo no localStorage
+    if (localStorage.getItem('saldoAtual')) {
+        saldoAtual = parseFloat(localStorage.getItem('saldoAtual'));
+        saldo.innerHTML = saldoAtual.toFixed(2); // Atualiza a exibição do saldo na página
+    }
+    
+  });
+}
+
+// ---------------------------------------------------------------------
+
+//-------------- Class Despesa -----------------------------------------
 
 
  adicionar.addEventListener("click", function operacoes() {
-
-  
 
   let minhaConta = new Conta(
     ano.value,
@@ -96,6 +102,9 @@ if(minhaConta.validarDados()){
     let quant = minhaConta.valor
     quant = quant.replace(',', '.');
     let operacao = quant[0]
+
+    minhaConta.receita()
+    minhaConta.despesa()
 
 
     if(operacao !== '+' && operacao !==  '-'){
@@ -139,22 +148,24 @@ function clearInput(){
 
        saldoAtual = saldoModificado
       }
-
   
     } 
     
-    
+   
+    let v = saldoAtual.toFixed(2)
+    localStorage.setItem('saldoAtual', v)
+    saldo.innerHTML = localStorage.getItem('saldoAtual')
 
-      const valorFinal = saldoAtual.toFixed(2)
-    localStorage.setItem("saldoAtual", valorFinal)
 
-    window.location.reload()
- 
-    
       clearInput()
    
      modals('Registro inserido com sucesso', 'modal-header text-success', 'Os dados foram cadastrados com sucesso!', 'Voltar', 'btn btn-success')
     }
+
+
+    let meuBanco = new Banco();
+
+  meuBanco.gravar(minhaConta)
     
      }
 
@@ -162,12 +173,9 @@ function clearInput(){
      modals('Erro na inclusão do registro', 'modal-header text-danger', 'Erro, verifique se todos os campos foram preenchidos corretamente ou se o valor adicionado foi zero (indiferente).', 'Voltar e corrigir', 'btn btn-danger')
   }
 
-  let meuBanco = new Banco();
-
-  meuBanco.gravar(minhaConta)
-
 
 });
 
+verificarLoalStorageSaldo()
 
 

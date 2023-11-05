@@ -1,4 +1,8 @@
 import { Banco, Conta } from './banco.js';
+const valorDeReceita = document.querySelector("#receita")
+const valorDeDespesa = document.querySelector("#despesa")
+valorDeReceita.innerHTML = localStorage.getItem('receitas') || "0.00"
+valorDeDespesa.innerHTML = localStorage.getItem('despesas')|| "0.00"
 
 const meuBanco = new Banco(); 
 const lista = document.getElementById('lista')
