@@ -97,7 +97,7 @@ function verificarLoalStorageSaldo(){
 
 
 //Validações de entradas e Cálculos 
-if(minhaConta.validarDados()){
+if(minhaConta.validarDados() == 1){
 
     let quant = minhaConta.valor
     quant = quant.replace(',', '.');
@@ -168,9 +168,15 @@ function clearInput(){
   meuBanco.gravar(minhaConta)
     
      }
+     else if(minhaConta.validarDados() == 2){
+      modals('Erro na inclusão do registro DIA', 'modal-header text-danger', 'O valor DIA é somente um número de 1 à 31. Verifique.', 'Voltar e corrigir', 'btn btn-danger')
+
+     } else if(minhaConta.validarDados() == 3){
+      modals('Erro na inclusão do registro VALOR', 'modal-header text-danger', 'O valor adicionado foi zero, logo indiferente.', 'Voltar e corrigir', 'btn btn-danger')
+     }
 
   else {
-     modals('Erro na inclusão do registro', 'modal-header text-danger', 'Erro, verifique se todos os campos foram preenchidos corretamente ou se o valor adicionado foi zero (indiferente).', 'Voltar e corrigir', 'btn btn-danger')
+     modals('Erro na inclusão do registro', 'modal-header text-danger', 'Erro, verifique se todos os campos foram preenchidos corretamente.', 'Voltar e corrigir', 'btn btn-danger')
   }
 
 

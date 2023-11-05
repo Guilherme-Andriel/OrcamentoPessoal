@@ -14,12 +14,19 @@ export class Conta {
   
     validarDados(){
       for(let i in this){
-        if(this[i] == undefined || this[i] == '' || this[i] == null || this[i] == 0.00){
+        if(this[i] == undefined || this[i] == '' || this[i] == null){
           return false;
         }
       }
+      const regex = /^([1-9]|[12]\d|3[01])$|^0[1-9]$/ //apenas numeros de 1 a 31
+      if(!this.dia.match(regex)){
+        return 2
+      }
+      if(this.valor == 0.00){
+        return 3
+      }
   
-       return true;
+       return 1;
     }
 
     receita(){
