@@ -7,83 +7,105 @@ valorDeDespesa.innerHTML = localStorage.getItem('despesas')|| "0.00"
 const meuBanco = new Banco(); 
 const lista = document.getElementById('lista')
 
-function carregarLista(elemento){
+function criarCardModal(descricao) {
+    let divEscuro = document.createElement("div");
+    divEscuro.classList.add("overlay");
+    document.body.appendChild(divEscuro);
 
-    elemento.forEach(function(d){
+    let divDescricao = document.createElement("div");
+    divDescricao.classList.add("card-modal");
+    divDescricao.innerHTML = `
+        <div class="card-body">
+            <h5 class="card-title">Descrição</h5>
+            <p class="card-text">${descricao}</p>
+            <a href="#" class="btn btn-primary dVoltar">Voltar</a>
+        </div>
+    `;
+    document.body.appendChild(divDescricao);
 
-             /* <tr>
-                <td>15/03/2018</td>
-                <td>Alimentação</td>
-                <td>compras do mês</td>
-                <td>444.75</td>
-              </tr> */
-        
-        // método para criar as linhas (tr) de acordo com a quantidade de items no array
-        let linha = lista.insertRow()
+    let dVoltar = divDescricao.querySelector(".dVoltar");
+    dVoltar.addEventListener("click", () => {
+        divDescricao.remove();
+        divEscuro.remove();
+    });
+}
 
-         // método para criar as colunas (td) de acordo com as linhas (cada linha tem com 4 colunas)
-        linha.insertCell(0).innerHTML = `${d.dia}/${d.mes}/${d.ano}`
+function adicionarEventoDescricao() {
+    let truncateText = document.querySelectorAll(".truncate-text");
 
-        switch(d.tipo){
-            case '1': d.tipo = 'Alimentação'
-                break
-            case '2': d.tipo = 'Educação'
-                break
-            case '3': d.tipo = 'Lazer'
-                break
-            case '4': d.tipo = 'Saúde'
-                break
-            case '5': d.tipo = 'Transporte'
-                break
+    truncateText.forEach(function(element) {
+        element.addEventListener("click", () => {
+            let descricao = element.textContent;
+
+            // Verifica se há algum card-modal aberto antes de abrir outro
+            if (!document.querySelector(".card-modal")) {
+                criarCardModal(descricao);
+            }
+        });
+    });
+}
+
+function carregarLista(elemento) {
+    elemento.forEach(function(d) {
+        let linha = lista.insertRow();
+        linha.insertCell(0).innerHTML = `${d.dia}/${d.mes}/${d.ano}`;
+
+        switch (d.tipo) {
+            case '1':
+                d.tipo = 'Alimentação';
+                break;
+            case '2':
+                d.tipo = 'Educação';
+                break;
+            case '3':
+                d.tipo = 'Lazer';
+                break;
+            case '4':
+                d.tipo = 'Saúde';
+                break;
+            case '5':
+                d.tipo = 'Transporte';
+                break;
         }
 
-        linha.insertCell(1).innerHTML = d.tipo
-        linha.insertCell(2).innerHTML = d.descricao
-        linha.insertCell(3).innerHTML = d.valor
+        linha.insertCell(1).innerHTML = d.tipo;
+        linha.insertCell(2).innerHTML = `<div class="truncate-text">${d.descricao}</div>`;
+        linha.insertCell(3).innerHTML = d.valor;
 
-        //criar botão de exclusão
-        let btn = document.createElement("button")
-        btn.className = 'btn btn-danger'
-        btn.innerHTML = '<i class="fas fa-times"></i>'
-        btn.id = `id_${d.id}` // criação do id pelo indice no localStorage
+        let btn = document.createElement("button");
+        btn.className = 'btn btn-danger';
+        btn.innerHTML = '<i class="fas fa-times"></i>';
+        btn.id = `id_${d.id}`;
 
-        btn.onclick = () =>{
-            meuBanco.remover(d.id)
+        btn.onclick = () => {
+            meuBanco.remover(d.id);
+            window.location.reload();
+        };
 
-            window.location.reload()
-        }
-        linha.insertCell(4).append(btn)
-
-
-    })
+        linha.insertCell(4).append(btn);
+    });
 }
 
 window.onload = () => {
-  let registros = meuBanco.recuperarTodosRegistros();
-carregarLista(registros)
-
+    let registros = meuBanco.recuperarTodosRegistros();
+    carregarLista(registros);
+    adicionarEventoDescricao();
 };
 
+let buscar = document.querySelector('#buscar');
 
-let buscar = document.querySelector('#buscar')
+buscar.addEventListener("click", () => {
+    let ano = document.getElementById('ano').value;
+    let mes = document.getElementById('mes').value;
+    let dia = document.getElementById('dia').value;
+    let tipo = document.getElementById('tipo').value;
+    let descricao = document.getElementById('descricao').value;
+    let valor = document.getElementById('valor').value;
 
-buscar.addEventListener("click", () =>{
-    
-    let ano = document.getElementById('ano').value
-    let mes = document.getElementById('mes').value
-    let dia = document.getElementById('dia').value
-    let tipo = document.getElementById('tipo').value 
-    let descricao = document.getElementById('descricao').value 
-    let valor = document.getElementById('valor').value
+    let minhaConta = new Conta(ano, mes, dia, tipo, descricao, valor);
+    let items = meuBanco.buscar(minhaConta);
 
+    lista.innerHTML = '';
+    carregarLista(items);
+});
 
-    let minhaConta = new Conta(ano, mes, dia, tipo, descricao, valor)
-
-    let items = meuBanco.buscar(minhaConta)
-
-   
-    lista.innerHTML = '' //eliminando os items não filtrados
-
-   carregarLista(items)
-
-})
