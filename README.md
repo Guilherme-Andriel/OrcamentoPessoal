@@ -40,7 +40,7 @@ Este projeto de Orçamento Pessoal é uma aplicação simples para registro de t
 
 ## Deploy do Projeto
 
-Você pode visualizar o projeto [clicando aqui](https://guilherme-andriel.github.io/SistemaDeContabilidade/
+Você pode visualizar o projeto [clicando aqui]( https://guilherme-andriel.github.io/OrcamentoPessoal/
 ).
 
 
